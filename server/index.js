@@ -3,7 +3,6 @@ import connectDB from "./app/config/database.js";
 import router from "./app/routes/index.js";
 import cookieParser from "cookie-parser";
 import cors from "cors";
-import { created, serverError } from "./app/utils/responseHandler.js";
 
 // Get allowed origin from environment variable
 const allowedOrigin = process.env.ALLOWED_ORIGIN || "*";

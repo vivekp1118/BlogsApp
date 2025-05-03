@@ -6,7 +6,7 @@ import { handleError } from "../../utils/handleError.js";
 export const authenticate = async (req, res, next) => {
     const token = req.cookies.access_token;
     if (!token) {
-        return unauthorized(res, "access token not found");
+        return unauthorized(res, "Unauthorized");
     }
 
     try {

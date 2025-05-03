@@ -10,23 +10,6 @@ const sendResponse = (options, res) => {
     });
 };
 
-//  status prefixes
-// const prefixes = {
-//     200: "Success",
-//     201: "Created",
-//     400: "Bad Request",
-//     401: "Unauthorized",
-//     403: "Forbidden",
-//     404: "Not Found",
-//     500: "Server Error",
-// };
-
-// format message with prefix
-// const formatMessage = (prefix, message) => {
-//     if (!message) return prefix;
-//     return `${prefix}: ${message}`;
-// };
-
 // Success
 const success = (res, result = null, message = "") =>
     sendResponse(

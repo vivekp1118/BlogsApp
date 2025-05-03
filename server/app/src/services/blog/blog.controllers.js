@@ -8,7 +8,7 @@ const blogTypes = z.enum(["public", "private"]);
 
 const blogSchema = z.object({
     title: z.string().min(1, "title is required"),
-    content: z.string().min(10, "Content is required"),
+    content: z.string().min(4, "Content is required"),
     tags: z.array(z.string()).optional(),
     blogType: blogTypes.optional()
 });
@@ -20,7 +20,7 @@ const createBlog = async (req, res) => {
         const result = blogSchema.safeParse(req.body);
         if (!result.success) throw result.error;
 
-        const { title, content, tags, blogType } = req.body;
+        const { title, content, tags, blogType = 'public' } = req.body;
         const blog = await Blog.create({ title, content, tags, authorId: req.user._id, blogType });
         const blogDetails = removeFields(blog, [], true);
         return created(res, blogDetails, "Blog created successfully");
@@ -51,7 +51,7 @@ const getAllUsersBlogs = async (req, res) => {
         const limit = Number(req.query.limit) || 10;
         const skip = (page - 1) * limit;
 
-        const blogs = await Blog.find({blogType: "public"}).populate("authorId").sort({ createdAt: -1 }).skip(skip).limit(limit);
+        const blogs = await Blog.find({blogType: "public"}).populate("authorId", "userName createdAt").sort({ createdAt: -1 }).skip(skip).limit(limit);
         const count = await Blog.countDocuments({blogType: "public"});
         const totalPages = Math.ceil(count / limit);
 
@@ -76,18 +76,17 @@ const removeBlog = async (req, res) => {
 const updateBlog = async (req, res) => {
     try {
     
-        const data  = updateBlogSchema.safeParse(req.body)
-
-        if(!data.success) throw data.error;
+        const result  = updateBlogSchema.safeParse(req.body)
+        if(!result.success) throw result.error;
         if(!req.params.id) return badRequest(res, "Blog id is required");
 
         // add enum validation
-        let blog = await Blog.findByIdAndUpdate({
+        let blog = await Blog.findOneAndUpdate({
             _id: req.params.id,
             authorId: req.user._id
-        }, data, { new: true });
+        }, result.data, { new: true });
 
-        
+               
         if(!blog) return notFound(res, "Blog not found");
         const blogDetails = removeFields(blog, [], true);
         return success(res, blogDetails, "Blog updated successfully");
@@ -96,10 +95,22 @@ const updateBlog = async (req, res) => {
     }
 };
 
+const getBlogDetails = async (req, res) => {
+    try {
+        const blog = await Blog.findOne({
+            _id: req.params.id,
+            authorId: req.user._id
+        }).populate("authorId", "userName createdAt");
+        return success(res, blog, "Blog fetched successfully");
+    } catch (error) {
+        return handleError(error, res);   
+    }
+};
 export {
     createBlog,
     getUsersBlogs, 
     getAllUsersBlogs,
     removeBlog,
-    updateBlog
+    updateBlog,
+    getBlogDetails
 } 
