@@ -13,6 +13,8 @@ const registerSchema = z.object({
     userName: z.string().min(1, "Username is required"),
 });
 
+const updateUserSchema = registerSchema.partial();
+
 const register = async (req, res) => {
     try {
         const result = registerSchema.safeParse(req.body);
@@ -86,7 +88,11 @@ const getCurrentUser = (req, res) => {
 
 const updateUser = async (req, res) => {
     try {
-        const updatedUser = await User.findByIdAndUpdate(req.user._id, req.body, { new: true });
+        const result = updateUserSchema.safeParse(req.body);
+        if (!result.success) throw result.error;
+        const { name, userName } = req.body;
+        
+        const updatedUser = await User.findByIdAndUpdate(req.user._id, { name, userName }, { new: true });
         const userDetails = removeFields(updatedUser, [], true);
         return success(res, userDetails, "User updated successfully");
     } catch (error) {

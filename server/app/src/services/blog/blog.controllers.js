@@ -117,7 +117,6 @@ const getBlogDetails = async (req, res) => {
     try {
         const blog = await Blog.findOne({
             _id: req.params.id,
-            authorId: req.user._id
         }).populate("authorId", "userName createdAt");
         return success(res, blog, "Blog fetched successfully");
     } catch (error) {

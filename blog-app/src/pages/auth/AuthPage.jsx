@@ -74,7 +74,7 @@ const AuthPage = () => {
 
     return (
         <div className="flex min-h-screen w-full flex-col items-center justify-center bg-orange-50">
-            <section className="h-fit w-[440px] rounded-md border-2 bg-white p-6 shadow-lg">
+            <section className="h-fit w-[340px] rounded-md border-2 bg-white p-6 shadow-lg md:w-[440px]">
                 <header className="text-2xl font-bold">
                     {activeTab === 'login' ? 'Sign In' : 'Sign Up'}
                 </header>

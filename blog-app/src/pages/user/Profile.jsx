@@ -44,12 +44,6 @@ const Profile = () => {
             newErrors.userName = 'Username is required';
         }
 
-        if (!formData.email.trim()) {
-            newErrors.email = 'Email is required';
-        } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
-            newErrors.email = 'Email is invalid';
-        }
-
         setErrors(newErrors);
         return Object.keys(newErrors).length === 0;
     };
@@ -135,6 +129,7 @@ const Profile = () => {
                                 onChange={handleChange}
                                 required
                                 error={errors.email}
+                                disabled
                             />
 
                             <div className="pt-4">
