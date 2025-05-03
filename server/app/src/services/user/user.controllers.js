@@ -24,13 +24,13 @@ const register = async (req, res) => {
         const hashedPassword = await bcrypt.hash(password, 10);
         const user = await User.create({ name, email, password: hashedPassword, userName });
         if(!user) return badRequest(res, "Registration failed");
-        
+
         const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: "24h" });
         res.cookie("access_token", token, {
             httpOnly: true,
             secure: process.env.NODE_ENV === "production", // Only true in production
             sameSite: "strict", // Allow cross-site requests
-            maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+            maxAge: 24 * 60 * 60 * 1000, // 24 hours
         });
 
         return created(res, user, "User created successfully");
@@ -53,10 +53,10 @@ const login = async (req, res) => {
             httpOnly: true,
             secure: process.env.NODE_ENV === "production", // Only true in production
             sameSite: "strict", // Allow cross-site requests
-            maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+            maxAge:24 * 60 * 60 * 1000 // 24 hours
         });
 
-        return success(res, token, "Logged in successfully");
+        return success(res, user, "Logged in successfully");
     } catch (error) {
         return handleError(error, res);
     }

@@ -7,8 +7,22 @@ import Blog from "./blog.model.js";
 const blogTypes = z.enum(["public", "private"]);
 
 const blogSchema = z.object({
-    title: z.string().min(1, "title is required"),
-    content: z.string().min(4, "Content is required"),
+    title: z.string()
+      .refine((val) => val.trim().length > 0, {
+      message: 'Title is required',
+      })
+      .refine((val) => val.trim().length >= 4, {
+      message: 'Title must be at least 4 characters',
+      }),
+
+    content: z.string()
+      .refine((val) => val.trim().length > 0, {
+      message: 'Content is required',
+      })
+      .refine((val) => val.trim().length >= 10, {
+      message: 'Content must be at least 10 characters',
+      }),
+
     tags: z.array(z.string()).optional(),
     blogType: blogTypes.optional()
 });
@@ -64,7 +78,11 @@ const getAllUsersBlogs = async (req, res) => {
 
 const removeBlog = async (req, res) => {
     try {
-        const blog = await Blog.findByIdAndDelete(req.params.id);
+        const blog = await Blog.findOneAndDelete({
+            _id: req.params.id,
+            authorId: req.user._id
+        });
+        if(!blog) return notFound(res, "Blog not found");
         const blogDetails = removeFields(blog, [], true);
         return success(res, blogDetails, "Blog removed successfully");
     } catch (error) {

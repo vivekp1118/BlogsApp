@@ -1,6 +1,5 @@
 import { axiosInstance } from '../../context/AuthContext';
 
-// Base URL is already configured in axiosInstance
 import { useEffect, useState } from 'react';
 import toast, { Toaster } from 'react-hot-toast';
 import { BlogCards } from '../../components/BlogCard';
@@ -34,6 +33,21 @@ export const Dashboard = ({ selfBlog = false }) => {
             .finally(setIsLoading(false));
     };
 
+    const deleteBlog = async (id) => {
+        setIsLoading(true);
+        await axiosInstance
+            .delete(`/blog/${id}`)
+            .then((res) => {
+                toast.success(res.data.message);
+                getAllBlogs();
+            })
+            .catch((err) => {
+                console.log(err);
+                toast.error(err.response.data.message);
+            })
+            .finally(setIsLoading(false));
+    };
+
     useEffect(() => {
         getAllBlogs();
     }, [page, selfBlog]);
@@ -45,7 +59,13 @@ export const Dashboard = ({ selfBlog = false }) => {
     return (
         <>
             <Navbar />
-            <div className="flex flex-wrap justify-center gap-10 p-10 md:justify-between">
+            <div className="flex flex-wrap justify-center gap-10 p-10">
+                {allBlogs.length === 0 && (
+                    <div className="flex h-[calc(100vh-20rem)] w-full items-center justify-center text-center text-2xl font-bold">
+                        NO BLOGS FOUND !!
+                    </div>
+                )}
+
                 {allBlogs.map((item) => {
                     return (
                         <BlogCards
@@ -57,6 +77,7 @@ export const Dashboard = ({ selfBlog = false }) => {
                             createdAt={item.createdAt}
                             selfBlog={selfBlog}
                             blogType={item.blogType || ''}
+                            deleteBlog={deleteBlog}
                         />
                     );
                 })}

@@ -11,7 +11,8 @@ export const BlogCards = ({
     authorId,
     selfBlog,
     createdAt,
-    blogType
+    blogType,
+    deleteBlog
 }) => {
     const { pathname } = useLocation();
     const isSelected = pathname.endsWith(`blog/${_id}`);
@@ -84,13 +85,13 @@ export const BlogCards = ({
                             <Edit className="h-5 w-5" />
                         </Link>
 
-                        <Link
-                            to={`/dashboard/blog/${_id}`}
+                        <button
+                            onClick={() => deleteBlog(_id)}
                             className="flex items-center justify-center rounded-md bg-red-600 p-2 text-white transition hover:bg-red-700"
                             title="Delete"
                         >
                             <Trash className="h-5 w-5" />
-                        </Link>
+                        </button>
                     </div>
                 )}
                 {selfBlog && (

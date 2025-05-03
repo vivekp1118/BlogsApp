@@ -134,7 +134,7 @@ export const CreateBlog = () => {
     return (
         <>
             <Navbar />
-            <div className="mx-auto my-8 max-w-3xl">
+            <div className="mx-auto min-h-screen max-w-3xl bg-gray-50 p-4">
                 <div className="w-full rounded-lg border border-gray-300 bg-white p-6 shadow-lg">
                     <h2 className="mb-6 text-2xl font-bold text-gray-800">
                         {isPreview
@@ -273,7 +273,7 @@ export const CreateBlog = () => {
                                     type="submit"
                                     className="rounded-md bg-blue-600 px-4 py-2 text-white transition-colors hover:bg-blue-700"
                                 >
-                                    Create Post
+                                    {isEditMode ? 'Update Post' : 'Create Post'}
                                 </button>
                             </div>
                         </form>
