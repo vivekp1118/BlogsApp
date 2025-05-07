@@ -25,13 +25,13 @@ const register = async (req, res) => {
         const { name, email, password, userName } = req.body;
         const hashedPassword = await bcrypt.hash(password, 10);
         const user = await User.create({ name, email, password: hashedPassword, userName });
-        if(!user) return badRequest(res, "Registration failed");
+        if (!user) return badRequest(res, "Registration failed");
 
         const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: "24h" });
         res.cookie("access_token", token, {
             httpOnly: true,
             secure: process.env.NODE_ENV === "production", // Only true in production
-            sameSite: "strict", // Allow cross-site requests
+            sameSite: "None", // Allow cross-site requests
             maxAge: 24 * 60 * 60 * 1000, // 24 hours
         });
 
@@ -54,8 +54,8 @@ const login = async (req, res) => {
         res.cookie("access_token", token, {
             httpOnly: true,
             secure: process.env.NODE_ENV === "production", // Only true in production
-            sameSite: "strict", // Allow cross-site requests
-            maxAge:24 * 60 * 60 * 1000 // 24 hours
+            sameSite: "None", // Allow cross-site requests
+            maxAge: 24 * 60 * 60 * 1000, // 24 hours
         });
 
         return success(res, user, "Logged in successfully");
@@ -91,7 +91,7 @@ const updateUser = async (req, res) => {
         const result = updateUserSchema.safeParse(req.body);
         if (!result.success) throw result.error;
         const { name, userName } = req.body;
-        
+
         const updatedUser = await User.findByIdAndUpdate(req.user._id, { name, userName }, { new: true });
         const userDetails = removeFields(updatedUser, [], true);
         return success(res, userDetails, "User updated successfully");
